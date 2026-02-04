@@ -338,7 +338,12 @@ function getTeamInsights(team, evals, notes) {
       if (lvl === "example") exampleCount++;
       if (lvl === "on_track") onTrackCount++;
     });
-    return { ...b, trainingCount, exampleCount, onTrackCount, total: trainingCount + exampleCount + onTrackCount };
+    const insight = trainingCount > 0 
+      ? `${trainingCount} di ${team.length} persone nel team stanno lavorando su questo comportamento.`
+      : exampleCount > 0
+      ? `Comportamento più forte nel team con ${exampleCount} persone di esempio.`
+      : `${onTrackCount} persone in linea su questo comportamento.`;
+    return { ...b, trainingCount, exampleCount, onTrackCount, total: trainingCount + exampleCount + onTrackCount, insight };
   });
   const mostCritical = [...behaviorStats].sort((a, b) => b.trainingCount - a.trainingCount)[0];
   const strongest = [...behaviorStats].sort((a, b) => b.exampleCount - a.exampleCount)[0];
@@ -898,8 +903,7 @@ function TeamDashboard({ team, evals, notes, onClose }) {
                 Area critica
               </span>
               <span style={{ fontSize: 13, color: T.text, lineHeight: 1.5 }}>
-                <strong>{mostCritical.name}</strong> — {mostCritical.trainingCount} di {team.length} persone nel team
-                stanno lavorando su questo comportamento.
+                <strong>{mostCritical.name}</strong> — {mostCritical.insight}
               </span>
             </div>
             <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
@@ -917,8 +921,7 @@ function TeamDashboard({ team, evals, notes, onClose }) {
                 Punto di forza
               </span>
               <span style={{ fontSize: 13, color: T.text, lineHeight: 1.5 }}>
-                <strong>{strongest.name}</strong> — comportamento più forte nel team con {strongest.exampleCount}{" "}
-                persone di esempio.
+                <strong>{strongest.name}</strong> — {strongest.insight}
               </span>
             </div>
           </div>
