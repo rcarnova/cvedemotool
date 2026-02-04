@@ -1,20 +1,48 @@
 import { useState, useEffect } from "react";
 import cveLogo from "@/assets/cve-logo.png";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
+import "@fontsource/sora/400.css";
+import "@fontsource/sora/600.css";
+import "@fontsource/sora/700.css";
 
-// ─── THEME ────────────────────────────────────────────────────────────────────
+// ─── THEME (CVE Brand Palette) ────────────────────────────────────────────────
 const T = {
-  bg: "#F5F6F8",
-  surface: "#FFFFFF",
-  border: "#EAECF0",
-  text: "#1A1A1A",
-  textMuted: "#7A7F8E",
-  textLight: "#A3A8B5",
-  accent: "#1A1A1A",
-  accentSoft: "#F0F0F2",
-  training: { color: "#D94F3D", bg: "#FBF0EF" },
-  onTrack: { color: "#2E7D55", bg: "#EDF7F1" },
-  example: { color: "#2A6CB5", bg: "#EEF3FA" },
-  ai: { color: "#6366F1", bg: "#F0F0FF" },
+  // Core CVE Colors
+  bg: "#F5F6F8",           // Neutral light background
+  surface: "#FFFFFF",       // White cards/containers
+  border: "#EAECF0",        // Light borders
+  text: "#1A1A1A",          // Primary text (neutral dark)
+  textMuted: "#6B7280",     // Secondary text
+  textLight: "#9CA3AF",     // Tertiary text
+  
+  // CVE Primary Accent
+  accent: "#22C9AC",        // Verde acqua CVE - primary accent
+  accentHover: "#1DB89C",   // Hover state (5% darker)
+  accentSoft: "#E8FAF6",    // Soft accent background
+  accentRing: "rgba(34, 201, 172, 0.4)", // Focus ring
+  
+  // Semantic Status Colors
+  training: { color: "#DC2626", bg: "#FEF2F2" },  // Red for "Da allenare"
+  onTrack: { color: "#22C9AC", bg: "#E8FAF6" },   // CVE green for "In linea"
+  example: { color: "#0D9488", bg: "#E6FFFA" },   // Teal for "Di esempio"
+  ai: { color: "#22C9AC", bg: "#E8FAF6" },        // CVE green for AI features
+  
+  // Typography
+  fontBody: "'Inter', system-ui, sans-serif",
+  fontHeading: "'Sora', system-ui, sans-serif",
+  
+  // Shadows
+  shadowSoft: "0 1px 3px rgba(0, 0, 0, 0.08)",
+  shadowMedium: "0 4px 12px rgba(0, 0, 0, 0.1)",
+  shadowElevated: "0 8px 24px rgba(0, 0, 0, 0.12)",
+  
+  // Border radius
+  radiusSm: 8,
+  radiusMd: 12,
+  radiusLg: 16,
 };
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
@@ -319,7 +347,7 @@ function getTeamInsights(team, evals, notes) {
 
 // ─── COMPONENTS ───────────────────────────────────────────────────────────────
 
-function Avatar({ initials, size = 36, color = "#1A1A1A", style = {} }: { initials: string; size?: number; color?: string; style?: React.CSSProperties }) {
+function Avatar({ initials, size = 36, color = "#22C9AC", style = {} }: { initials: string; size?: number; color?: string; style?: React.CSSProperties }) {
   return (
     <div
       style={{
@@ -333,8 +361,9 @@ function Avatar({ initials, size = 36, color = "#1A1A1A", style = {} }: { initia
         color: "#fff",
         fontSize: size * 0.36,
         fontWeight: 700,
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: T.fontBody,
         flexShrink: 0,
+        boxShadow: T.shadowSoft,
         ...style,
       }}
     >
@@ -594,20 +623,27 @@ function QuickNoteModal({ team, onClose, onSave, selectedPerson, selectedBehavio
           style={{
             width: "100%",
             minHeight: 100,
-            padding: "12px 14px",
+            padding: "14px 16px",
             border: `1.5px solid ${T.border}`,
-            borderRadius: 12,
+            borderRadius: T.radiusMd,
             fontSize: 14,
             color: T.text,
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: T.fontBody,
             resize: "none",
             outline: "none",
             background: T.bg,
             boxSizing: "border-box",
-            lineHeight: 1.5,
+            lineHeight: 1.6,
+            transition: "border-color 0.2s, box-shadow 0.2s",
           }}
-          onFocus={(e) => (e.target.style.borderColor = T.text)}
-          onBlur={(e) => (e.target.style.borderColor = T.border)}
+          onFocus={(e) => {
+            e.target.style.borderColor = T.accent;
+            e.target.style.boxShadow = `0 0 0 3px ${T.accentRing}`;
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = T.border;
+            e.target.style.boxShadow = "none";
+          }}
         />
 
         {/* AI suggestion if text is judgmental */}
@@ -692,15 +728,23 @@ function QuickNoteModal({ team, onClose, onSave, selectedPerson, selectedBehavio
           disabled={!text || !level}
           style={{
             width: "100%",
-            padding: "14px",
-            borderRadius: 14,
+            padding: "15px",
+            borderRadius: T.radiusMd,
             border: "none",
-            background: text && level ? T.text : T.border,
+            background: text && level ? T.accent : T.border,
             color: "#fff",
             fontSize: 15,
             fontWeight: 700,
             cursor: text && level ? "pointer" : "default",
-            transition: "background 0.2s",
+            transition: "all 0.2s ease",
+            boxShadow: text && level ? T.shadowMedium : "none",
+            fontFamily: T.fontBody,
+          }}
+          onMouseEnter={(e) => {
+            if (text && level) e.currentTarget.style.background = T.accentHover;
+          }}
+          onMouseLeave={(e) => {
+            if (text && level) e.currentTarget.style.background = T.accent;
           }}
         >
           Salva nota
@@ -1095,12 +1139,11 @@ function TeamValidationScreen({ initialSelection, isFirstTime, onValidate }) {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'DM Sans', sans-serif; background: ${T.bg}; min-height: 100vh; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: ${T.bg}; min-height: 100vh; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(100%); opacity:0; } to { transform: translateY(0); opacity:1; } }
-        button { font-family: 'DM Sans', sans-serif; }
+        button { font-family: 'Inter', system-ui, sans-serif; }
       `}</style>
       <div
         style={{
@@ -1147,11 +1190,11 @@ function TeamValidationScreen({ initialSelection, isFirstTime, onValidate }) {
           </div>
           <h1
             style={{
-              fontFamily: "'DM Serif Display', serif",
+              fontFamily: T.fontHeading,
               fontSize: 28,
               color: T.text,
-              fontWeight: 400,
-              lineHeight: 1.2,
+              fontWeight: 700,
+              lineHeight: 1.3,
               marginBottom: 10,
             }}
           >
@@ -1192,7 +1235,7 @@ function TeamValidationScreen({ initialSelection, isFirstTime, onValidate }) {
                 gap: 12,
               }}
             >
-              <Avatar initials={person.initials} size={40} color="#1A1A1A" />
+              <Avatar initials={person.initials} size={40} color={T.accent} />
               <div style={{ flex: 1 }}>
                 <span style={{ fontSize: 14, fontWeight: 700, color: T.text, display: "block" }}>{person.name}</span>
                 <span style={{ fontSize: 12, color: T.textMuted }}>{person.role}</span>
@@ -1349,15 +1392,23 @@ function TeamValidationScreen({ initialSelection, isFirstTime, onValidate }) {
           disabled={selected.length === 0}
           style={{
             width: "100%",
-            padding: "15px",
-            borderRadius: 14,
+            padding: "16px",
+            borderRadius: T.radiusMd,
             border: "none",
-            background: selected.length > 0 ? T.text : T.border,
+            background: selected.length > 0 ? T.accent : T.border,
             color: "#fff",
             fontSize: 15,
             fontWeight: 700,
             cursor: selected.length > 0 ? "pointer" : "default",
-            transition: "background 0.2s",
+            transition: "all 0.2s ease",
+            boxShadow: selected.length > 0 ? T.shadowMedium : "none",
+            fontFamily: T.fontBody,
+          }}
+          onMouseEnter={(e) => {
+            if (selected.length > 0) e.currentTarget.style.background = T.accentHover;
+          }}
+          onMouseLeave={(e) => {
+            if (selected.length > 0) e.currentTarget.style.background = T.accent;
           }}
         >
           {isFirstTime ? `Conferma team (${selected.length} persone)` : `Salva modifiche (${selected.length} persone)`}
@@ -1441,15 +1492,14 @@ export default function App() {
     return (
       <>
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
           * { box-sizing: border-box; margin: 0; padding: 0; }
-          body { font-family: 'DM Sans', sans-serif; background: ${T.bg}; min-height: 100vh; }
+          body { font-family: 'Inter', system-ui, sans-serif; background: ${T.bg}; min-height: 100vh; }
           @keyframes slideUp { from { transform: translateY(100%); opacity:0; } to { transform: translateY(0); opacity:1; } }
           @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
           @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
           @keyframes stagger0 { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
           textarea::-webkit-scrollbar { width: 4px; } textarea::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
-          button { font-family: 'DM Sans', sans-serif; }
+          button { font-family: 'Inter', system-ui, sans-serif; }
         `}</style>
         <div
           style={{
@@ -1499,12 +1549,13 @@ export default function App() {
                     padding: "6px 16px",
                     borderRadius: 18,
                     border: "none",
-                    background: role === r.id ? T.text : "transparent",
+                    background: role === r.id ? T.accent : "transparent",
                     color: role === r.id ? "#fff" : T.textMuted,
                     fontSize: 13,
                     fontWeight: role === r.id ? 700 : 500,
                     cursor: "pointer",
                     transition: "all 0.2s",
+                    fontFamily: T.fontBody,
                   }}
                 >
                   {r.label}
@@ -1553,16 +1604,17 @@ export default function App() {
           {/* Greeting */}
           <h1
             style={{
-              fontFamily: "'DM Serif Display', serif",
+              fontFamily: T.fontHeading,
               fontSize: 26,
               color: T.text,
-              fontWeight: 400,
+              fontWeight: 700,
               marginBottom: 4,
+              lineHeight: 1.3,
             }}
           >
             Buongiorno, {isManager ? "Dalila" : "Chiara"}
           </h1>
-          <p style={{ fontSize: 14, color: T.textMuted, marginBottom: 28 }}>
+          <p style={{ fontSize: 14, color: T.textMuted, marginBottom: 28, lineHeight: 1.6, fontFamily: T.fontBody }}>
             {isManager ? "Segui la crescita del tuo team" : "Segui il tuo percorso di crescita"}
           </p>
 
@@ -1578,32 +1630,43 @@ export default function App() {
                 display: "flex",
                 alignItems: "center",
                 gap: 14,
-                background: T.text,
-                borderRadius: 16,
+                background: T.accent,
+                borderRadius: T.radiusLg,
                 border: "none",
-                padding: "16px 20px",
+                padding: "18px 22px",
                 cursor: "pointer",
                 marginBottom: 20,
+                boxShadow: T.shadowMedium,
+                transition: "all 0.2s ease",
+                fontFamily: T.fontBody,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = T.accentHover;
+                e.currentTarget.style.transform = "scale(1.01)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = T.accent;
+                e.currentTarget.style.transform = "scale(1)";
               }}
             >
               <div
                 style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: 10,
-                  background: "rgba(255,255,255,0.12)",
+                  width: 40,
+                  height: 40,
+                  borderRadius: T.radiusSm,
+                  background: "rgba(255,255,255,0.2)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
-                <span style={{ color: "#fff", fontSize: 18 }}>+</span>
+                <span style={{ color: "#fff", fontSize: 20, fontWeight: 700 }}>+</span>
               </div>
               <div style={{ textAlign: "left", flex: 1 }}>
-                <span style={{ color: "#fff", fontSize: 14, fontWeight: 700, display: "block" }}>
+                <span style={{ color: "#fff", fontSize: 15, fontWeight: 700, display: "block", fontFamily: T.fontBody }}>
                   Registra una nota
                 </span>
-                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 12 }}>Aggiungi un'osservazione rapida</span>
+                <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 13 }}>Aggiungi un'osservazione rapida</span>
               </div>
               <Tip id="registraNota" position="top" />
             </button>
@@ -1642,16 +1705,26 @@ export default function App() {
                       width: "100%",
                       background: T.surface,
                       border: `1px solid ${T.border}`,
-                      borderRadius: 14,
-                      padding: "16px 18px",
+                      borderRadius: T.radiusLg,
+                      padding: "18px 20px",
                       cursor: "pointer",
                       display: "flex",
                       alignItems: "center",
-                      gap: 14,
+                      gap: 16,
                       textAlign: "left",
+                      boxShadow: T.shadowSoft,
+                      transition: "all 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "scale(1.01)";
+                      e.currentTarget.style.boxShadow = T.shadowMedium;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "scale(1)";
+                      e.currentTarget.style.boxShadow = T.shadowSoft;
                     }}
                   >
-                    <Avatar initials={member.initials} size={42} color="#1A1A1A" />
+                    <Avatar initials={member.initials} size={44} color={T.accent} />
                     <div style={{ flex: 1 }}>
                       <span style={{ fontSize: 15, fontWeight: 700, color: T.text, display: "block" }}>
                         {member.name}
@@ -1714,15 +1787,14 @@ export default function App() {
     return (
       <>
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
           * { box-sizing: border-box; margin: 0; padding: 0; }
-          body { font-family: 'DM Sans', sans-serif; background: ${T.bg}; min-height: 100vh; }
+          body { font-family: 'Inter', system-ui, sans-serif; background: ${T.bg}; min-height: 100vh; }
           @keyframes slideUp { from { transform: translateY(100%); opacity:0; } to { transform: translateY(0); opacity:1; } }
           @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
           @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
           @keyframes expandDown { from { opacity:0; max-height:0; } to { opacity:1; max-height:600px; } }
           textarea::-webkit-scrollbar { width: 4px; } textarea::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
-          button { font-family: 'DM Sans', sans-serif; }
+          button { font-family: 'Inter', system-ui, sans-serif; }
         `}</style>
         <div
           style={{
@@ -1762,7 +1834,7 @@ export default function App() {
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <Avatar initials={personObj.initials} size={50} color="#1A1A1A" />
+              <Avatar initials={personObj.initials} size={50} color={T.accent} />
               <div style={{ flex: 1 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: T.text, margin: 0 }}>{personObj.name}</h2>
                 <p style={{ fontSize: 13, color: T.textMuted, margin: "2px 0 0" }}>{personObj.role}</p>
@@ -1790,7 +1862,7 @@ export default function App() {
                       flex: 1,
                       padding: "8px 12px",
                       borderRadius: 10,
-                      border: ok ? `2px solid ${T.text}` : `2px solid ${T.border}`,
+                      border: ok ? `2px solid ${T.accent}` : `2px solid ${T.border}`,
                       background: ok ? T.accentSoft : T.surface,
                       color: ok ? T.text : T.textMuted,
                       fontSize: 12.5,
@@ -1908,7 +1980,7 @@ export default function App() {
                     fontWeight: 700,
                     textTransform: "uppercase",
                     letterSpacing: "0.1em",
-                    color: cat === "dna" ? "#8B5CF6" : "#2A6CB5",
+                    color: cat === "dna" ? T.accent : "#0D9488",
                     display: "inline-flex",
                     alignItems: "center",
                     gap: 4,
@@ -1973,15 +2045,14 @@ export default function App() {
     return (
       <>
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
           * { box-sizing: border-box; margin: 0; padding: 0; }
-          body { font-family: 'DM Sans', sans-serif; background: ${T.bg}; min-height: 100vh; }
+          body { font-family: 'Inter', system-ui, sans-serif; background: ${T.bg}; min-height: 100vh; }
           @keyframes slideUp { from { transform: translateY(100%); opacity:0; } to { transform: translateY(0); opacity:1; } }
           @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
           @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
           @keyframes expandDown { from { opacity:0; max-height:0; } to { opacity:1; max-height:600px; } }
           textarea::-webkit-scrollbar { width: 4px; } textarea::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
-          button { font-family: 'DM Sans', sans-serif; }
+          button { font-family: 'Inter', system-ui, sans-serif; }
         `}</style>
         <div
           style={{
@@ -2029,7 +2100,7 @@ export default function App() {
                     fontWeight: 700,
                     textTransform: "uppercase",
                     letterSpacing: "0.1em",
-                    color: cat === "dna" ? "#8B5CF6" : "#2A6CB5",
+                    color: cat === "dna" ? T.accent : "#0D9488",
                     display: "inline-flex",
                     alignItems: "center",
                     gap: 4,
@@ -2094,11 +2165,10 @@ export default function App() {
     return (
       <>
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
           * { box-sizing: border-box; margin: 0; padding: 0; }
-          body { font-family: 'DM Sans', sans-serif; background: ${T.bg}; min-height: 100vh; }
+          body { font-family: 'Inter', system-ui, sans-serif; background: ${T.bg}; min-height: 100vh; }
           @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-          button { font-family: 'DM Sans', sans-serif; }
+          button { font-family: 'Inter', system-ui, sans-serif; }
         `}</style>
         <TeamDashboard team={activeTeam} evals={evals} notes={notes} onClose={() => setScreen("home")} />
       </>
@@ -2157,8 +2227,8 @@ function BehaviorCardNew({
                 fontWeight: 700,
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
-                color: behavior.category === "dna" ? "#8B5CF6" : "#2A6CB5",
-                background: behavior.category === "dna" ? "#F3F0FF" : "#EEF3FA",
+                color: behavior.category === "dna" ? T.accent : "#0D9488",
+                background: behavior.category === "dna" ? T.accentSoft : "#E6FFFA",
                 padding: "2px 8px",
                 borderRadius: 8,
               }}
@@ -2364,19 +2434,27 @@ function BehaviorCardNew({
                 style={{
                   width: "100%",
                   minHeight: 70,
-                  padding: "10px 12px",
+                  padding: "12px 14px",
                   border: `1.5px solid ${T.border}`,
-                  borderRadius: 10,
+                  borderRadius: T.radiusSm,
                   fontSize: 13,
                   color: T.text,
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: T.fontBody,
                   resize: "none",
                   outline: "none",
                   background: T.bg,
                   boxSizing: "border-box",
+                  lineHeight: 1.6,
+                  transition: "border-color 0.2s, box-shadow 0.2s",
                 }}
-                onFocus={(e) => (e.target.style.borderColor = "#8B5CF6")}
-                onBlur={(e) => (e.target.style.borderColor = T.border)}
+                onFocus={(e) => {
+                  e.target.style.borderColor = T.accent;
+                  e.target.style.boxShadow = `0 0 0 3px ${T.accentRing}`;
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = T.border;
+                  e.target.style.boxShadow = "none";
+                }}
               />
               <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
                 {empText && (
@@ -2387,15 +2465,18 @@ function BehaviorCardNew({
                     }}
                     style={{
                       flex: 1,
-                      padding: "8px",
-                      borderRadius: 10,
+                      padding: "10px",
+                      borderRadius: T.radiusSm,
                       border: "none",
-                      background: "#8B5CF6",
+                      background: T.accent,
                       color: "#fff",
                       fontSize: 13,
                       fontWeight: 700,
                       cursor: "pointer",
+                      transition: "background 0.2s",
                     }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = T.accentHover)}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = T.accent)}
                   >
                     Salva
                   </button>
