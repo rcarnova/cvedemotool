@@ -1462,11 +1462,18 @@ export default function App() {
         >
           {/* CVE Logo */}
           <div style={{ marginBottom: 32, display: "flex", justifyContent: "center" }}>
-            <img
-              src={cveLogo}
-              alt="CVE"
-              style={{ height: 42, width: "auto" }}
-            />
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "#1A1A1A",
+                borderRadius: 12,
+                padding: "12px 20px",
+              }}
+            >
+              <img src={cveLogo} alt="CVE" style={{ height: 36, objectFit: "contain" }} />
+            </div>
           </div>
 
           {/* Role switcher */}
