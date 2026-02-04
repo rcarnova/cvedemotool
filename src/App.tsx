@@ -318,7 +318,7 @@ function getTeamInsights(team, evals, notes) {
 
 // ─── COMPONENTS ───────────────────────────────────────────────────────────────
 
-function Avatar({ initials, size = 36, color = "#1A1A1A" }) {
+function Avatar({ initials, size = 36, color = "#1A1A1A", style = {} }: { initials: string; size?: number; color?: string; style?: React.CSSProperties }) {
   return (
     <div
       style={{
@@ -334,6 +334,7 @@ function Avatar({ initials, size = 36, color = "#1A1A1A" }) {
         fontWeight: 700,
         fontFamily: "'DM Sans', sans-serif",
         flexShrink: 0,
+        ...style,
       }}
     >
       {initials}
@@ -430,7 +431,6 @@ function Tip({ id, position = "bottom" }) {
               position: "absolute",
               [isTop ? "bottom" : "top"]: -5,
               left: "50%",
-              transform: "translateX(-50%)",
               width: 10,
               height: 10,
               background: T.text,
@@ -1357,7 +1357,7 @@ export default function App() {
   const [screen, setScreen] = useState("home"); // home | profile | behaviors | team
   const [selectedPerson, setSelectedPerson] = useState("roberto");
   const [quickNote, setQuickNote] = useState(false);
-  const [quickNoteContext, setQuickNoteContext] = useState({});
+  const [quickNoteContext, setQuickNoteContext] = useState<{ person?: string; behavior?: string }>({});
   const [historyOpen, setHistoryOpen] = useState(null);
   const [notes, setNotes] = useState(INITIAL_NOTES);
   const [evals, setEvals] = useState(INITIAL_EVALS);
