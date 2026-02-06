@@ -1201,7 +1201,7 @@ function TeamValidationScreen({ initialSelection, isFirstTime, onValidate }) {
               marginBottom: 10,
             }}
           >
-            {isFirstTime ? "Configura il tuo team" : "Il tuo team attuale"}
+            {isFirstTime ? "Controlla il tuo team" : "Il tuo team attuale"}
           </h1>
           <p style={{ fontSize: 14, color: T.textMuted, lineHeight: 1.5 }}>
             {isFirstTime
