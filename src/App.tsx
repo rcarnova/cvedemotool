@@ -1991,7 +1991,7 @@ export default function App() {
                     gap: 4,
                   }}
                 >
-                  {cat === "dna" ? "DNA Aziendale" : "Team Vendite"}
+                  {cat === "dna" ? "DNA Aziendale" : "Team Amministrazione"}
                   <Tip id={cat === "dna" ? "dnaAziendale" : "teamVendite"} />
                 </span>
                 <div style={{ flex: 1, height: 1, background: T.border }} />
@@ -2112,7 +2112,7 @@ export default function App() {
                     gap: 4,
                   }}
                 >
-                  {cat === "dna" ? "DNA Aziendale" : "Team Vendite"}
+                  {cat === "dna" ? "DNA Aziendale" : "Team Amministrazione"}
                   <Tip id={cat === "dna" ? "dnaAziendale" : "teamVendite"} />
                 </span>
                 <div style={{ flex: 1, height: 1, background: T.border }} />
