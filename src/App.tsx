@@ -760,7 +760,7 @@ function QuickNoteModal({ team, onClose, onSave, selectedPerson, selectedBehavio
 }
 
 // History Drawer
-function HistoryDrawer({ notes, behaviorName, onClose }) {
+function HistoryDrawer({ notes, behaviorName, personName, onClose }) {
   const managerNotes = notes.filter((n) => n.author === "manager");
   const employeeNotes = notes.filter((n) => n.author === "employee");
   return (
@@ -790,7 +790,7 @@ function HistoryDrawer({ notes, behaviorName, onClose }) {
         )}
         {[
           { label: "Osservazioni del manager", items: managerNotes },
-          { label: "Prospettiva di Chiara", items: employeeNotes },
+          { label: `Prospettiva di ${personName || "Chiara"}`, items: employeeNotes },
         ].map((group) =>
           group.items.length > 0 ? (
             <div key={group.label} style={{ marginBottom: 18 }}>
@@ -1201,7 +1201,7 @@ function TeamValidationScreen({ initialSelection, isFirstTime, onValidate }) {
               marginBottom: 10,
             }}
           >
-            {isFirstTime ? "Configura il tuo team" : "Il tuo team attuale"}
+            {isFirstTime ? "Controlla il tuo team" : "Il tuo team attuale"}
           </h1>
           <p style={{ fontSize: 14, color: T.textMuted, lineHeight: 1.5 }}>
             {isFirstTime
@@ -1425,7 +1425,7 @@ function TeamValidationScreen({ initialSelection, isFirstTime, onValidate }) {
 export default function App() {
   const [role, setRole] = useState("manager");
   const [screen, setScreen] = useState("home"); // home | profile | behaviors | team
-  const [selectedPerson, setSelectedPerson] = useState("roberto");
+  const [selectedPerson, setSelectedPerson] = useState("chiara");
   const [quickNote, setQuickNote] = useState(false);
   const [quickNoteContext, setQuickNoteContext] = useState<{ person?: string; behavior?: string }>({});
   const [historyOpen, setHistoryOpen] = useState(null);
@@ -1458,7 +1458,7 @@ export default function App() {
   }
 
   // Usa activeTeam ovunque al posto di TEAM (per il resto dell'app)
-  const currentTeam = role === "manager" ? activeTeam : [activeTeam.find((t) => t.id === "roberto") || activeTeam[0]];
+  const currentTeam = role === "manager" ? activeTeam : [activeTeam.find((t) => t.id === "chiara") || activeTeam[0]];
   const isManager = role === "manager";
   const personObj = activeTeam.find((t) => t.id === selectedPerson) || activeTeam[0];
   const personNotes = notes[personObj?.id] || {};
@@ -1693,7 +1693,7 @@ export default function App() {
             </span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {(isManager ? currentTeam : currentTeam.filter((t) => t.id === "roberto")).map((member, i) => {
+            {(isManager ? currentTeam : currentTeam.filter((t) => t.id === "chiara")).map((member, i) => {
               const memberEvals = evals[member.id] || {};
               const trainingCount = Object.values(memberEvals).filter((v) => v === "training").length;
               const exampleCount = Object.values(memberEvals).filter((v) => v === "example").length;
@@ -1857,10 +1857,11 @@ export default function App() {
                 { key: "employee", label: "Chiara" },
               ].map((p) => {
                 const ok = profileOk[p.key];
+                const canToggle = (isManager && p.key === "manager") || (!isManager && p.key === "employee");
                 return (
                   <button
                     key={p.key}
-                    onClick={() => setProfileOk((prev) => ({ ...prev, [p.key]: !prev[p.key] }))}
+                    onClick={() => canToggle && setProfileOk((prev) => ({ ...prev, [p.key]: !prev[p.key] }))}
                     style={{
                       flex: 1,
                       padding: "8px 12px",
@@ -1870,7 +1871,8 @@ export default function App() {
                       color: ok ? T.text : T.textMuted,
                       fontSize: 12.5,
                       fontWeight: ok ? 700 : 500,
-                      cursor: "pointer",
+                      cursor: canToggle ? "pointer" : "default",
+                      opacity: canToggle ? 1 : 0.6,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -2027,6 +2029,7 @@ export default function App() {
           <HistoryDrawer
             notes={personNotes[historyOpen] || []}
             behaviorName={BEHAVIORS.find((b) => b.id === historyOpen)?.name}
+            personName={personObj?.name?.split(" ")[0]}
             onClose={() => setHistoryOpen(null)}
           />
         )}
@@ -2147,6 +2150,7 @@ export default function App() {
           <HistoryDrawer
             notes={personNotes[historyOpen] || []}
             behaviorName={BEHAVIORS.find((b) => b.id === historyOpen)?.name}
+            personName={personObj?.name?.split(" ")[0]}
             onClose={() => setHistoryOpen(null)}
           />
         )}
