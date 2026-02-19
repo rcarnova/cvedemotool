@@ -1424,7 +1424,6 @@ function TeamValidationScreen({ initialSelection, isFirstTime, onValidate }) {
 }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
-export default function App() {
   export default function App() {
   const [role, setRole] = useState("manager");
   const [screen, setScreen] = useState("home");
