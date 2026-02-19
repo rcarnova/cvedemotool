@@ -1446,7 +1446,7 @@ function TeamValidationScreen({ initialSelection, isFirstTime, onValidate }) {
     supabase
       .from("people")
       .select("id, name")
-      .eq("is_manager", true)
+      .in("role", ["manager", "ceo"])
       .then(({ data }) => { if (data) setManagers(data); });
   }, []);
 
